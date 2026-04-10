@@ -30,6 +30,7 @@ export default function News({ title, image, published, link }: NewsProps) {
       
       <View style={styles.content}>
         <Text style={styles.title}>{title}</Text>
+        
         <Text style={styles.date}>{published}</Text>
       </View>
     </TouchableOpacity>
@@ -64,5 +65,10 @@ const styles = StyleSheet.create({
   date: {
     fontSize: 14,
     color: '#666',
+  },
+  summary: {
+    fontSize:14,
+    color:'#444',
+    marginBottom:8,
   },
 });

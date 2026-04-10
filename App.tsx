@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ScrollView, SafeAreaView, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, SafeAreaView, ActivityIndicator, Platform , StatusBar as RNStatusBar } from 'react-native';
+import { globalStyles } from './src/styles/global';
 import News from './src/components/News';
-
 import { fetchNewsService, NewsData } from './src/utils/handle-api';
+
+
+const statusBarHeight = Platform.OS ==='android' ? RNStatusBar.currentHeight ?? 0 : 0;
 
 export default function App() {
   const [newsList, setNewsList] = useState<NewsData[]>([]);
@@ -63,15 +66,16 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: globalStyles.backgroundColor.backgroundColor,
   },
   header: {
     padding: 16,
+    paddingTop: statusBarHeight,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
     alignItems: 'center',
-    paddingTop: 40, // Ensure header is spaced from exact top
+    // Ensure header is spaced from exact top
   },
   headerTitle: {
     fontSize: 22,
@@ -84,7 +88,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 10,
-    fontSize: 16,
+    fontSize: globalStyles.bodyFontSize.fontSize,
     color: '#666',
   },
   errorText: {

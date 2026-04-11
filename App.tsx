@@ -55,6 +55,7 @@ export default function App() {
               image={item.image}
               published={item.published}
               link={item.link}
+              summary={item.summary}
             />
           ))}
         </ScrollView>

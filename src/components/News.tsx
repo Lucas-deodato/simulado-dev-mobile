@@ -6,9 +6,10 @@ interface NewsProps {
   image?: string | null;
   published: string;
   link: string;
+  summary?: string;
 }
 
-export default function News({ title, image, published, link }: NewsProps) {
+export default function News({ title, image, published, link, summary }: NewsProps) {
   const handlePress = async () => {
     try {
       const supported = await Linking.canOpenURL(link);
@@ -30,6 +31,12 @@ export default function News({ title, image, published, link }: NewsProps) {
       
       <View style={styles.content}>
         <Text style={styles.title}>{title}</Text>
+
+        {summary && (
+          <Text numberOfLines={2} style={styles.summary}> 
+            {summary} 
+          </Text>
+        )}
         
         <Text style={styles.date}>{published}</Text>
       </View>

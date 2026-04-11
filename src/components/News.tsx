@@ -10,6 +10,7 @@ interface NewsProps {
 }
 
 export default function News({ title, image, published, link, summary }: NewsProps) {
+  const [ imageError, setImageError ] = React.useState(false)
   const handlePress = async () => {
     try {
       const supported = await Linking.canOpenURL(link);
@@ -25,9 +26,9 @@ export default function News({ title, image, published, link, summary }: NewsPro
 
   return (
     <TouchableOpacity style={styles.card} onPress={handlePress} activeOpacity={0.7}>
-      {image ? (
-        <Image style={styles.image} source={{ uri: image }} resizeMode="cover" />
-      ) : null}
+      {(!image || imageError) ? (
+        (<View style={styles.imageFallback}> <Text>Sem imagem</Text> </View>)
+      ) : <Image style={styles.image} source={{ uri: image }} resizeMode="cover" onError={() => setImageError(true)} />}
       
       <View style={styles.content}>
         <Text style={styles.title}>{title}</Text>
@@ -77,5 +78,12 @@ const styles = StyleSheet.create({
     fontSize:14,
     color:'#444',
     marginBottom:8,
+  },
+  imageFallback: {
+    width:'100%',
+    height:180,
+    backgroundColor:'#ccc',
+    justifyContent:'center',
+    alignItems:'center',
   },
 });

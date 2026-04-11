@@ -35,6 +35,11 @@ export default function App() {
       
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Últimas notícias</Text>
+        {!loading && !error && (
+          <Text style={{ textAlign: 'center', marginVertical: 8 }}>
+            {newsList.length} notícias encontradas
+          </Text>
+        )}
       </View>
 
       {loading ? (

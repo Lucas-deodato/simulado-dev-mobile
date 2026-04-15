@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, FlatList, SafeAreaView, ActivityIndicator, Platform , StatusBar as RNStatusBar, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, FlatList, SafeAreaView, ActivityIndicator, Platform , StatusBar as RNStatusBar, TextInput, TouchableOpacity, Modal } from 'react-native';
 import { globalStyles } from './src/styles/global';
 import News from './src/components/News';
+import NewsDetail from './src/components/NewsDetail';
 import { fetchNewsService, NewsData } from './src/utils/handle-api';
 
 
@@ -14,6 +15,7 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [selectedNews, setSelectedNews] = useState<NewsData | null>(null);
 
   useEffect(() => {
     fetchNews();
@@ -105,11 +107,8 @@ export default function App() {
           data={filteredAndSortedNews}
           renderItem={({ item }) => (
             <News
-              title={item.title}
-              image={item.image}
-              published={item.published}
-              link={item.link}
-              summary={item.summary}
+              news={item}
+              onPress={(news) => setSelectedNews(news)}
             />
           )}
           keyExtractor={(item) => item.id.toString()}
@@ -124,6 +123,18 @@ export default function App() {
           contentContainerStyle={styles.flatListContent}
         />
       )}
+
+      {/* Modal para exibir detalhes da notícia */}
+      <Modal
+        animationType="slide"
+        visible={selectedNews !== null}
+        onRequestClose={() => setSelectedNews(null)}
+      >
+        <NewsDetail
+          news={selectedNews}
+          onClose={() => setSelectedNews(null)}
+        />
+      </Modal>
     </SafeAreaView>
   );
 }

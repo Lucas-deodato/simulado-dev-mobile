@@ -1,45 +1,31 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Linking } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { NewsData } from '../utils/handle-api';
 
 interface NewsProps {
-  title: string;
-  image?: string | null;
-  published: string;
-  link: string;
-  summary?: string;
+  news: NewsData;
+  onPress: (news: NewsData) => void;
 }
 
-export default function News({ title, image, published, link, summary }: NewsProps) {
+export default function News({ news, onPress }: NewsProps) {
   const [ imageError, setImageError ] = React.useState(false)
-  const handlePress = async () => {
-    try {
-      const supported = await Linking.canOpenURL(link);
-      if (supported) {
-        await Linking.openURL(link);
-      } else {
-        console.warn(`Não foi possível abrir a URL: ${link}`);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   return (
-    <TouchableOpacity style={styles.card} onPress={handlePress} activeOpacity={0.7}>
-      {(!image || imageError) ? (
+    <TouchableOpacity style={styles.card} onPress={() => onPress(news)} activeOpacity={0.7}>
+      {(!news.image || imageError) ? (
         (<View style={styles.imageFallback}> <Text>Sem imagem</Text> </View>)
-      ) : <Image style={styles.image} source={{ uri: image }} resizeMode="cover" onError={() => setImageError(true)} />}
+      ) : <Image style={styles.image} source={{ uri: news.image }} resizeMode="cover" onError={() => setImageError(true)} />}
       
       <View style={styles.content}>
-        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.title}>{news.title}</Text>
 
-        {summary && (
+        {news.summary && (
           <Text numberOfLines={2} style={styles.summary}> 
-            {summary} 
+            {news.summary} 
           </Text>
         )}
         
-        <Text style={styles.date}>{published}</Text>
+        <Text style={styles.date}>{news.published}</Text>
       </View>
     </TouchableOpacity>
   );

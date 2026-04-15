@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ScrollView, SafeAreaView, ActivityIndicator, Platform , StatusBar as RNStatusBar } from 'react-native';
+import { StyleSheet, Text, View, FlatList, SafeAreaView, ActivityIndicator, Platform , StatusBar as RNStatusBar, TextInput, TouchableOpacity } from 'react-native';
 import { globalStyles } from './src/styles/global';
 import News from './src/components/News';
 import { fetchNewsService, NewsData } from './src/utils/handle-api';
@@ -52,18 +52,28 @@ export default function App() {
           <Text style={styles.errorText}>Erro: {error}</Text>
         </View>
       ) : (
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          {newsList.map((item) => (
+        <FlatList
+          data={filteredAndSortedNews}
+          renderItem={({ item }) => (
             <News
-              key={item.id.toString()}
               title={item.title}
               image={item.image}
               published={item.published}
               link={item.link}
               summary={item.summary}
             />
-          ))}
-        </ScrollView>
+          )}
+          keyExtractor={(item) => item.id.toString()}
+          ItemSeparatorComponent={() => (
+            <View style={styles.separator} />
+          )}
+          ListEmptyComponent={() => (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>Nenhuma notícia disponível no momento.</Text>
+            </View>
+          )}
+          contentContainerStyle={styles.flatListContent}
+        />
       )}
     </SafeAreaView>
   );
@@ -101,7 +111,26 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: 16,
   },
-  scrollContent: {
-    padding: 16,
+  flatListContent: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 16,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#e0e0e0',
+    marginHorizontal: 16,
+    marginVertical: 0,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: 200,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#999',
+    textAlign: 'center',
   },
 });

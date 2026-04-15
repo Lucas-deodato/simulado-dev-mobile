@@ -12,6 +12,8 @@ export default function App() {
   const [newsList, setNewsList] = useState<NewsData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
     fetchNews();
@@ -29,17 +31,64 @@ export default function App() {
     }
   };
 
+  const filteredAndSortedNews = useMemo(() => {
+    // Filtrar por searchQuery (título e resumo)
+    let filtered = newsList.filter((item) => {
+      const searchLower = searchQuery.toLowerCase();
+      const titleMatch = item.title.toLowerCase().includes(searchLower);
+      const summaryMatch = item.summary?.toLowerCase().includes(searchLower) ?? false;
+      return titleMatch || summaryMatch;
+    });
+
+    // Ordenar por published
+    filtered.sort((a, b) => {
+      const dateA = new Date(a.published).getTime();
+      const dateB = new Date(b.published).getTime();
+      return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+    });
+
+    return filtered;
+  }, [newsList, searchQuery, sortOrder]);
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="dark" />
       
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Últimas notícias</Text>
-        {!loading && !error && (
-          <Text style={{ textAlign: 'center', marginVertical: 8 }}>
-            {newsList.length} notícias encontradas
-          </Text>
-        )}
+        
+        {/* TextInput de busca */}
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Buscar notícias..."
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholderTextColor="#999"
+        />
+
+        {/* Botão de ordenação e contador */}
+        <View style={styles.headerFooter}>
+          <TouchableOpacity
+            style={[
+              styles.sortButton,
+              sortOrder === 'desc' && styles.sortButtonActive,
+            ]}
+            onPress={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
+          >
+            <Text style={[
+              styles.sortButtonText,
+              sortOrder === 'desc' && styles.sortButtonTextActive,
+            ]}>
+              {sortOrder === 'desc' ? '↓ Mais recentes' : '↑ Mais antigas'}
+            </Text>
+          </TouchableOpacity>
+
+          {!loading && !error && (
+            <Text style={styles.counterText}>
+              {filteredAndSortedNews.length} notícia{filteredAndSortedNews.length !== 1 ? 's' : ''}
+            </Text>
+          )}
+        </View>
       </View>
 
       {loading ? (
@@ -85,17 +134,58 @@ const styles = StyleSheet.create({
     backgroundColor: globalStyles.backgroundColor.backgroundColor,
   },
   header: {
-    padding: 16,
+    paddingHorizontal: 16,
     paddingTop: statusBarHeight,
+    paddingBottom: 16,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
-    alignItems: 'center',
-    // Ensure header is spaced from exact top
   },
   headerTitle: {
     fontSize: 22,
     fontWeight: 'bold',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  searchInput: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 12,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  headerFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  sortButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    backgroundColor: '#f9f9f9',
+  },
+  sortButtonActive: {
+    backgroundColor: '#0000ff',
+    borderColor: '#0000ff',
+  },
+  sortButtonText: {
+    fontSize: 14,
+    color: '#333',
+    fontWeight: '500',
+  },
+  sortButtonTextActive: {
+    color: '#fff',
+  },
+  counterText: {
+    fontSize: 14,
+    color: '#666',
+    fontWeight: '500',
   },
   centerContainer: {
     flex: 1,

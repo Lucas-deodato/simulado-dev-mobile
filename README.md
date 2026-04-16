@@ -49,6 +49,30 @@ Para rodar o projeto localmente, certifique-se de possuir:
 - `News.tsx`: Componente focado apenas em renderizar os cartões individuais de cada notícia separadamente.
 - `services/api-handler.ts`: Módulo focado especificamente em realizar a chamada externa HTTP (Fetch) organizando os retornos e tipagens das notícias.
 
+## 🚀 Deploy com EAS
+
+O EAS (Expo Application Services) é um serviço na nuvem que permite construir, assinar e distribuir aplicativos React Native sem necessidade de configuração local complexa de SDKs. Ele gerencia automaticamente certificados de assinatura, gera binários otimizados para iOS e Android, e oferece suporte a múltiplos ambientes de distribuição.
+
+Este projeto está configurado com três perfis de build diferentes:
+
+- **Development**: Utiliza um cliente de desenvolvimento que permite testes iterativos rápidos com recarregamento ao vivo. É destinado apenas para uso interno e testes.
+- **Preview**: Gera um APK ou IPA sem o cliente de desenvolvimento, simulando mais fielmente o aplicativo de produção, mas ainda distribuído apenas internamente para testes antes do lançamento oficial.
+- **Production**: Configura o build para distribuição em loja oficial (Google Play ou App Store), com incremento automático de versão e otimizações completas.
+
+Para executar um build de preview e gerar um APK pronto para testes internos, utilize o comando:
+
+```bash
+npx eas-cli build --profile preview --platform android
+```
+
+Ou para iOS:
+
+```bash
+npx eas-cli build --profile preview --platform ios
+```
+
+Após a conclusão do build na nuvem, você receberá um link direto para baixar o binário pronto para instalação nos dispositivos de teste.
+
 ---
 
 > Projeto desenvolvido visando a facilidade e aprendizado para desenvolvedores que estão iniciando os estudos com React Native e Expo.
